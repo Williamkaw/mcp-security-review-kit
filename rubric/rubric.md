@@ -135,4 +135,4 @@ Total score = sum of all 8 criteria (0 to 24). Hard gates are criteria 1 to 4.
 
 Any non-gate criterion at 3 needs a documented risk acceptance from the system owner before approval. The thresholds are a starting point and will be calibrated after the worked reviews.
 
-ISO/IEC 42001 control numbers were checked against a published summary of the 2023 edition (Annex A groups A.2 to A.10). Confirm them against your licensed copy of the standard before citing them in an audit.
+ISO/IEC 42001 control numbers were checked against two published summaries of the 2023 edition: a web control list, and AI & Partners, "ISO/IEC 42001:2023: A Guide to Implementation" (March 2025), which lists A.6.2.8, A.9.2 to A.9.4 and A.10.2 to A.10.4 with the same titles. Confirm them against your licensed copy of the standard before citing them in an audit.
