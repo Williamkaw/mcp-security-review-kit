@@ -15,6 +15,7 @@ What was reviewed, and what was not. List every source used: README, source code
 
 - Reviewed:
 - Not reviewed, and why:
+- Other servers or tools expected in the same session (a risk can only be judged against what sits beside the server):
 
 ## 2. Scanner output
 
