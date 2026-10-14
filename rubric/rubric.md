@@ -17,7 +17,7 @@ A score of 3 on a hard-gate criterion (marked HG) means automatic reject.
 | 2 | Broad read access across a system, or write access beyond the use case. Confirmation is inconsistent. Scopes are wider than needed but limited to one system. |
 | 3 | Wildcard or admin scopes, shell or code execution, arbitrary file or network access, or destructive actions with no confirmation. Scope cannot be narrowed. |
 
-**Maps to:** OWASP LLM06 (Excessive Agency), LLM01 (blast radius of prompt injection). NIST AI RMF: MAP and MANAGE functions. ISO/IEC 27001:2022 Annex A 5.15 (access control) and 8.2 (privileged access rights). ISO/IEC 42001: Annex A controls on use of AI systems (verify numbering).
+**Maps to:** OWASP LLM06 (Excessive Agency), LLM01 (blast radius of prompt injection). NIST AI RMF: MAP and MANAGE functions. ISO/IEC 27001:2022 Annex A 5.15 (access control) and 8.2 (privileged access rights). ISO/IEC 42001:2023 Annex A.9 (use of AI systems), A.9.4 (intended use).
 
 ## 2. Authentication and Token Handling (HG)
 
@@ -32,7 +32,7 @@ A score of 3 on a hard-gate criterion (marked HG) means automatic reject.
 | 2 | Authentication is weak: a static shared API key, no audience validation, tokens in config files or logs, or consent not tracked per client. |
 | 3 | No authentication on a network-reachable server. Or token passthrough. Or credentials appearing in tool output or logs. Or a static client ID proxy that skips consent. |
 
-**Maps to:** OWASP LLM02 (Sensitive Information Disclosure), LLM03 (Supply Chain). MCP spec risks: token passthrough, confused deputy, malicious authorization URLs. NIST AI RMF: MANAGE and GOVERN functions. ISO/IEC 27001:2022 Annex A 5.17 (authentication information) and 8.5 (secure authentication). ISO/IEC 42001: Annex A third-party and use controls (verify numbering).
+**Maps to:** OWASP LLM02 (Sensitive Information Disclosure), LLM03 (Supply Chain). MCP spec risks: token passthrough, confused deputy, malicious authorization URLs. NIST AI RMF: MANAGE and GOVERN functions. ISO/IEC 27001:2022 Annex A 5.17 (authentication information) and 8.5 (secure authentication). ISO/IEC 42001:2023 Annex A.10 (third-party and customer relationships).
 ## 3. Prompt Injection Exposure (HG)
 
 **What it tests:** whether attacker-controlled text can reach the model while it holds sensitive access and the ability to act.
@@ -61,7 +61,7 @@ A score of 3 on a hard-gate criterion (marked HG) means automatic reject.
 | 2 | Unpinned versions, a single anonymous maintainer, or no change detection. |
 | 3 | Unverifiable source, obfuscated code, hidden instructions in tool descriptions, or auto-update from an unpinned source. |
 
-**Maps to:** OWASP LLM03. NIST AI RMF: GOVERN, MANAGE. ISO/IEC 27001:2022 Annex A 5.19 to 5.21 (supplier and ICT supply chain), 8.28 (secure coding).
+**Maps to:** OWASP LLM03. NIST AI RMF: GOVERN, MANAGE. ISO/IEC 27001:2022 Annex A 5.19 to 5.21 (supplier and ICT supply chain), 8.28 (secure coding). ISO/IEC 42001:2023 Annex A.10.3 (suppliers).
 
 ## 5. Execution Environment
 
@@ -121,7 +121,7 @@ A score of 3 on a hard-gate criterion (marked HG) means automatic reject.
 | 2 | Partial logs, or no way to attribute an action to a user. |
 | 3 | No logs, or logs that contain secrets. |
 
-**Maps to:** ISO/IEC 27001:2022 Annex A 8.15 (logging), 8.16 (monitoring). NIST AI RMF: MEASURE, MANAGE.
+**Maps to:** ISO/IEC 27001:2022 Annex A 8.15 (logging), 8.16 (monitoring). NIST AI RMF: MEASURE, MANAGE. ISO/IEC 42001:2023 Annex A.6.2.8 (AI system recording of event logs).
 
 ## Decision rules
 
@@ -134,3 +134,5 @@ Total score = sum of all 8 criteria (0 to 24). Hard gates are criteria 1 to 4.
 | Approve | Total 0 to 6, and no criterion above 1. |
 
 Any non-gate criterion at 3 needs a documented risk acceptance from the system owner before approval. The thresholds are a starting point and will be calibrated after the worked reviews.
+
+ISO/IEC 42001 control numbers were checked against a published summary of the 2023 edition (Annex A groups A.2 to A.10). Confirm them against your licensed copy of the standard before citing them in an audit.

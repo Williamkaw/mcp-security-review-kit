@@ -1,6 +1,6 @@
 # MCP Security Review Kit
 
-A practical framework for deciding whether an MCP server or AI connector is safe to approve: a scoring rubric, a manifest scanner, three worked reviews of real servers, and the templates around them. It maps to the OWASP Top 10 for LLM Applications, the NIST AI RMF, ISO/IEC 27001:2022 and ISO/IEC 42001.
+A practical framework for deciding whether an MCP server or AI connector is safe to approve: a scoring rubric, a manifest scanner (a keyword-based linter), three worked reviews of real servers, and the templates around them. It maps to the OWASP Top 10 for LLM Applications, the NIST AI RMF, ISO/IEC 27001:2022 and ISO/IEC 42001.
 
 When an AI assistant is connected to tools through the Model Context Protocol (MCP), every server becomes part of the attack surface. Most teams approve connectors by reading a README. This kit gives a security or GRC team a repeatable way to approve, condition or reject them, with evidence.
 
@@ -10,7 +10,7 @@ When an AI assistant is connected to tools through the Model Context Protocol (M
 |---|---|
 | [`docs/`](docs/threat-landscape.md) | The 11 risks that matter at the tool layer, with real incidents and sources |
 | [`rubric/`](rubric/rubric.md) | 8 scoring criteria, 4 hard gates, decision rules, and a machine-readable copy (`scoring.yaml`) |
-| [`scanner/`](scanner/README.md) | A Python command line tool that reads a server's tool list and drafts scores |
+| [`scanner/`](scanner/README.md) | A keyword-based linter that reads a server's tool list and drafts scores |
 | [`reviews/`](reviews/README.md) | A decision record template and three worked reviews |
 | [`templates/`](templates/README.md) | Intake form, approval checklist, data flow diagram |
 
@@ -67,19 +67,26 @@ On Windows without `python` on the path, use `py` instead. Exit code `0` means n
 | 2 Authentication and Token Handling | LLM02, LLM03 | Token passthrough, confused deputy | GOVERN, MANAGE | 5.17, 8.5 |
 | 3 Prompt Injection Exposure | LLM01 | Tool poisoning | MAP, MEASURE | 8.26, 8.12 |
 | 4 Tool Integrity and Supply Chain | LLM03 | Malicious packages | GOVERN, MANAGE | 5.19 to 5.21, 8.28 |
-| 5 Execution Environment | none direct | Local server compromise, SSRF | none direct | 8.20, 8.22, 8.9 |
-| 6 Data Exposure | LLM02 | none direct | none direct | 5.12, 5.34, 8.12 |
-| 7 Output Handling | LLM05 | none direct | none direct | 8.28, 8.26 |
-| 8 Auditability and Logging | none direct | Session and token attribution | MEASURE, MANAGE | 8.15, 8.16 |
+| 5 Execution Environment | not mapped | Local server compromise, SSRF | not mapped | 8.20, 8.22, 8.9 |
+| 6 Data Exposure | LLM02 | not mapped | not mapped | 5.12, 5.34, 8.12 |
+| 7 Output Handling | LLM05 | not mapped | not mapped | 8.28, 8.26 |
+| 8 Auditability and Logging | not mapped | Session and token attribution | MEASURE, MANAGE | 8.15, 8.16 |
 
-ISO/IEC 42001 controls are referenced in the rubric text. The Annex A numbering there is marked "verify" and should be checked against the published standard before use.
+ISO/IEC 42001 controls are referenced in the rubric text. The numbering was checked against a published summary of the 2023 edition, so confirm it against your licensed copy before citing it in an audit.
 
 ## Limitations
 
 - The scanner reads only the tool list. It matches English keywords and cannot see code, authentication, hosting or logging.
 - The thresholds (reject at 15, approve at 6 or less) are a first estimate. Three reviews did not argue for moving them, which is not proof they are right.
 - The GitHub review used the project's test snapshots for the tool list because a live build was not possible, and says so.
+- The rubric has one author and no second reviewer, so agreement between reviewers is untested.
+- The hardened scores for the GitHub server are predictions from documentation and source. I did not test them with a live token.
+- The filesystem plus fetch conclusion is a judgement against the rubric. No attack was built or run.
 - Reviews are a point in time. Servers change, so each record lists re-review triggers.
+
+## How this was built
+
+Drafted with AI assistance (Claude) for code, research support and writing. The sources were checked against primary documents where possible, and every score is a judgement that the author is expected to explain. Corrections are welcome through issues.
 
 ## Sources
 

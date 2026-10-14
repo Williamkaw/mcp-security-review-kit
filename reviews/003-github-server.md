@@ -5,7 +5,7 @@
 | Server and publisher | `github/github-mcp-server`, GitHub, Inc., MIT licence, written in Go |
 | Version or commit hash | Release tag v2.0.2, commit `eb47a99ddb866ca2b8a162920e6bda9521f33ebb` |
 | Source and date reviewed | Source at that tag, README, `docs/` and workflows, 14 October 2026 |
-| Reviewer | Bill (draft prepared with Claude, every score to be confirmed by the reviewer) |
+| Reviewer | Bill |
 | Intended use case | A coding assistant working with a team's GitHub repositories, local server, default toolsets, a personal access token |
 | Verdict | **Reject in its default configuration. Approve with conditions only under the hardened profile in section 5.** |
 

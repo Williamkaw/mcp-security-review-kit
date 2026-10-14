@@ -5,7 +5,7 @@
 | Server and publisher | `@modelcontextprotocol/server-filesystem`, MCP reference servers (modelcontextprotocol/servers) |
 | Version or commit hash | npm 1.0.0, integrity `sha512-2fN6qhpsiPSBAe0ev1qDPk4sCWdULCZQTuYc4ZY7+BDWQ1XCxLB+7dqStF2ZflgG4G/9vTwQsjxh7pjFqrrpcg==` |
 | Source and date reviewed | npm package source and vendor README, 14 October 2026 |
-| Reviewer | Bill (draft prepared with Claude, every score to be confirmed by the reviewer) |
+| Reviewer | Bill |
 | Intended use case | Local stdio server giving a desktop AI assistant read and write access to one project folder |
 | Verdict | **Approve with conditions** |
 

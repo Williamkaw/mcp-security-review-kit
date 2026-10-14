@@ -22,7 +22,7 @@ Example (Real): In April 2025, Invariant Labs demonstrated this against the Curs
 
 What goes wrong: An MCP server package is malicious from the start, or turns hostile after an update. Installing it runs someone else's code with my privileges and my trust.
 
-Example (Real): In September 2025, a package called postmark-mcp on npm, posing as the Postmark email integration, added a hidden BCC to its email tool, so a copy of every message went to an outside address. Write-ups differ on the exact version that introduced the change and on the details of the package's history, so I check those against the npm history before quoting them. [Source](https://snyk.io/blog/malicious-mcp-server-on-npm-postmark-mcp-harvests-emails/)
+Example (Real): In September 2025, a package called postmark-mcp on npm, posing as the Postmark email integration, added a hidden BCC to its email tool, so a copy of every message went to an outside address. Snyk's timeline has version 1.0.0 published on 15 September 2025 and says the hidden copy began "around 1.0.16", sending mail to an address on the domain giftshop.club. Snyk hedges on the exact version and I did not check the npm history myself, so treat the version number as approximate. [Source](https://snyk.io/blog/malicious-mcp-server-on-npm-postmark-mcp-harvests-emails/)
 
 ## 4. Excessive Agency (OWASP LLM06)
 

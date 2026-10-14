@@ -5,7 +5,7 @@
 | Server and publisher | `mcp-server-fetch`, Anthropic, PBC (MCP reference servers), MIT licence, published on PyPI |
 | Version or commit hash | 2026.10.10, wheel SHA-256 `d722c48bdc1de3e2a81727853bc490cf55c6c935e2038cdcad3c111b1d85db77` |
 | Source and date reviewed | PyPI wheel source (`server.py`, `__init__.py`), 14 October 2026 |
-| Reviewer | Bill (draft prepared with Claude, every score to be confirmed by the reviewer) |
+| Reviewer | Bill |
 | Intended use case | Let a desktop AI assistant read public web pages as markdown, started with default options |
 | Verdict | **Approve with conditions** |
 
