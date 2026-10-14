@@ -47,6 +47,19 @@ SQL_WORDS = r"\b(sql|query)\b"
 PATH_PARAMS = {"path", "file", "filepath", "file_path", "filename", "dir", "directory", "folder"}
 URL_PARAMS = {"url", "uri", "endpoint", "webhook", "href", "link", "host"}
 
+# Zero-width code points, written as numbers so this source file has no hidden characters.
+ZERO_WIDTH = {0x200B, 0x200C, 0x200D, 0x2060, 0xFEFF}
+
+# Parameters that let the caller choose where data goes.
+OUTBOUND_PARAM = r"(deliver_?to|send_?to|recipients?|to_?(address|email)|cc|bcc|notify(_\w+)?|webhook(_\w+)?|callback(_\w+)?|reply_?to|forward_?to)"
+# Descriptions that say data is sent or delivered somewhere.
+EGRESS_DESC = r"\b(deliver(s|ed)?|sends?|emails?|forwards?|uploads?|posts?|publish(es)?)\b[^.]{0,60}\b(to|at)\b"
+# Money movement and irreversibility signals.
+FINANCIAL_WORDS = r"\b(transfer|payment|payout|withdraw\w*|disburse\w*|wire|remit\w*|refund|settle\w*|debit)\b"
+IRREVERSIBLE_DESC = r"\b(cannot|can't|can not) be (undone|recalled|reversed|rolled back|recovered)\b|\birreversible\b|\bpermanent(ly)?\b"
+# Fields where a change is a common account-takeover step.
+IDENTITY_FIELDS = r"\b(phone|msisdn|email|password|passcode|mfa|otp|beneficiary)\b"
+
 WILDCARD_SCOPES = {"*", "all", "admin", "root", "full_access", "full-access", "owner", "superuser"}
 BROAD_SCOPE_PATTERN = re.compile(r"(^|[:._-])(admin|write_all|full|\*|all)([:._-]|$)", re.I)
 
@@ -70,7 +83,7 @@ def invisible_chars(text: str):
     bad = []
     for ch in text:
         cat = unicodedata.category(ch)
-        if cat in ("Cf", "Co") or ch in "​‌‍⁠﻿":
+        if cat in ("Cf", "Co") or ord(ch) in ZERO_WIDTH:
             bad.append(f"U+{ord(ch):04X}")
     return sorted(set(bad))
 
@@ -103,11 +116,15 @@ def check_descriptions(tool, name, findings):
             texts.append((f"param '{pname}'", str(pdef["description"])))
 
     for where, text in texts:
+        labels = []
         for pattern, label in INJECTION_PATTERNS:
-            if re.search(pattern, text, re.I | re.S):
-                findings.append(Finding(
-                    "tool_integrity_supply_chain", 3, name, "TI-HIDDEN-INSTRUCTION",
-                    f"{where}: {label}. Treat as tool poisoning until a human clears it."))
+            if re.search(pattern, text, re.I | re.S) and label not in labels:
+                labels.append(label)
+        if labels:
+            findings.append(Finding(
+                "tool_integrity_supply_chain", 3, name, "TI-HIDDEN-INSTRUCTION",
+                f"{where}: {len(labels)} signal(s): " + "; ".join(labels)
+                + ". Treat as tool poisoning until a human clears it."))
         inv = invisible_chars(text)
         if inv:
             findings.append(Finding(
@@ -148,6 +165,33 @@ def check_capability(tool, name, findings):
     if read_only is True and cls in ("write", "delete", "exec"):
         findings.append(Finding("tool_integrity_supply_chain", 2, name, "TI-ANNOTATION-MISMATCH",
                                 "Tool claims readOnlyHint=true but its name or description suggests it changes state."))
+
+    desc_text = str(tool.get("description", ""))
+    name_desc = f"{name} {desc_text}".lower().replace("_", " ")
+
+    if read_only is True and re.search(EGRESS_DESC, desc_text, re.I):
+        findings.append(Finding("tool_integrity_supply_chain", 2, name, "TI-READONLY-BUT-SENDS",
+                                "Tool claims readOnlyHint=true but its description says it sends or delivers data to a destination."))
+
+    for pname in props:
+        pl = pname.lower()
+        if re.fullmatch(OUTBOUND_PARAM, pl) or (pl == "to" and re.search(r"\b(send|email|mail|message)\b", name_desc)):
+            findings.append(Finding("permissions_scope", 2, name, "PS-OUTBOUND-PARAM",
+                                    f"Parameter '{pname}' lets the caller choose where data is sent. A manipulated model could route data to an attacker."))
+
+    if cls in ("write", "delete", "exec") and re.search(FINANCIAL_WORDS, name_desc):
+        confirmable = destructive is True
+        findings.append(Finding("permissions_scope", 2 if confirmable else 3, name, "PS-FINANCIAL-ACTION",
+                                "Tool moves money or settles payments. "
+                                + ("It declares destructiveHint, so clients can prompt for approval." if confirmable
+                                   else "No confirmation hint is declared. Irreversible financial actions need human approval.")))
+    elif cls in ("write", "delete") and destructive is not True and re.search(IRREVERSIBLE_DESC, desc_text, re.I):
+        findings.append(Finding("permissions_scope", 3, name, "PS-IRREVERSIBLE",
+                                "Description says the action cannot be undone and no destructiveHint is declared."))
+
+    if cls == "write" and re.search(IDENTITY_FIELDS, " ".join(props).lower()):
+        findings.append(Finding("permissions_scope", 2, name, "PS-IDENTITY-CHANGE",
+                                "Tool can change contact or credential details (phone, email, password, MFA, beneficiary). In fintech this is a common account-takeover step."))
 
     for pname, pdef in props.items():
         pl = pname.lower()
@@ -196,8 +240,12 @@ def check_server_level(manifest, tools, findings):
     classes = {classify_tool(t) for t in tools}
     ingest = any(re.search(r"\b(fetch|browse|scrape|read[_ ]?(email|mail|issue|ticket|page|url)|search[_ ]?web|inbox|download)\b",
                            f"{t.get('name','')} {t.get('description','')}".lower()) for t in tools)
-    egress = any(re.search(r"\b(send|post|email|upload|webhook|publish|forward)\b",
-                           str(t.get("name", "")).lower().replace("_", " ")) for t in tools)
+    egress = any(
+        re.search(r"\b(send|post|email|upload|webhook|publish|forward)\b",
+                  str(t.get("name", "")).lower().replace("_", " "))
+        or re.search(EGRESS_DESC, str(t.get("description", "")), re.I)
+        or any(re.fullmatch(OUTBOUND_PARAM, str(pn).lower()) for pn in schema_props(t))
+        for t in tools)
     if ingest and egress:
         findings.append(Finding("prompt_injection_exposure", 3, "<server>", "PI-INGEST-PLUS-EGRESS",
                                 "Server has tools that read external content AND tools that send data out. Confirm private data is not reachable in the same session. If it is, this is the critical case."))
