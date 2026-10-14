@@ -59,4 +59,6 @@ The first version scored the payments sample as "at least 2" for Permissions and
 - `export_statement` claims to be read-only but can deliver a statement to any address through `deliver_to`.
 - `update_customer_contact` can change the phone and email on a profile, a common account-takeover step.
 
+Review 1 (filesystem server) exposed a false positive: "file system" in a description matched the execution word list. The pattern no longer matches `system` on its own.
+
 Rules were added for each (`PS-FINANCIAL-ACTION`, `PS-IRREVERSIBLE`, `PS-OUTBOUND-PARAM`, `TI-READONLY-BUT-SENDS`, `PS-IDENTITY-CHANGE`). Multiple hidden-instruction signals on one description are now reported as a single finding, so one root cause is counted once.

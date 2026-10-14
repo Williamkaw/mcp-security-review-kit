@@ -38,7 +38,7 @@ INJECTION_PATTERNS = [
 ]
 
 # Names or descriptions that signal dangerous capability.
-EXEC_WORDS = r"\b(exec|execute|shell|bash|powershell|cmd|eval|run[_ ]?(command|script|code)|subprocess|system)\b"
+EXEC_WORDS = r"\b(exec|execute|shell|bash|powershell|cmd|eval|run[_ ]?(command|script|code)|subprocess|(?<!file )(?<!operating )system call|os\.system)\b"
 DELETE_WORDS = r"\b(delete|remove|drop|truncate|destroy|purge|wipe|erase|kill)\b"
 WRITE_WORDS = r"\b(write|create|update|modify|edit|insert|send|post|put|patch|upload|move|rename|set|deploy|commit|push|transfer|pay)\b"
 SQL_WORDS = r"\b(sql|query)\b"
