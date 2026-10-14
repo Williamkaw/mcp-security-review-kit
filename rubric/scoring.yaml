@@ -1,0 +1,79 @@
+version: 0.1
+scale: "0 = minimal risk, 3 = critical"
+verdicts:
+  reject: "any hard gate scores 3, or total >= 15"
+  approve_with_conditions: "total 7-14, no hard gate at 3"
+  approve: "total 0-6 and no criterion above 1"
+criteria:
+  - id: permissions_scope
+    name: Permissions and Scope
+    hard_gate: true
+    levels:
+      0: "Read-only, narrowly scoped"
+      1: "Narrow writes, human confirmation"
+      2: "Broad access, inconsistent confirmation"
+      3: "Wildcard or admin scopes, execution, no confirmation"
+    maps_to: {owasp_llm: [LLM06, LLM01], iso27001_2022: ["5.15", "8.2"]}
+  - id: authentication_tokens
+    name: Authentication and Token Handling
+    hard_gate: true
+    levels:
+      0: "Authenticated, audience validated, short-lived, no forwarding"
+      1: "Authenticated, minor lifetime or storage gaps"
+      2: "Static shared key, no audience check, tokens in config or logs"
+      3: "No auth, token passthrough, credentials in output, consent skipped"
+    maps_to: {owasp_llm: [LLM02, LLM03], iso27001_2022: ["5.17", "8.5"]}
+  - id: prompt_injection_exposure
+    name: Prompt Injection Exposure
+    hard_gate: true
+    levels:
+      0: "No untrusted content ingested"
+      1: "Untrusted content, read-only, no exfiltration route"
+      2: "Untrusted content alongside write tools, partial mitigations"
+      3: "Untrusted content, private data, and external comms in one session"
+    maps_to: {owasp_llm: [LLM01], iso27001_2022: ["8.26", "8.12"]}
+  - id: tool_integrity_supply_chain
+    name: Tool Integrity and Supply Chain
+    hard_gate: true
+    levels:
+      0: "Verified, reviewed, pinned, change alerts"
+      1: "Reputable, pinned, no formal review"
+      2: "Unpinned, anonymous maintainer, no change detection"
+      3: "Unverifiable, obfuscated, hidden instructions, unpinned auto-update"
+    maps_to: {owasp_llm: [LLM03], iso27001_2022: ["5.19", "5.20", "5.21", "8.28"]}
+  - id: execution_environment
+    name: Execution Environment
+    hard_gate: false
+    levels:
+      0: "Sandboxed, egress allowlist, fixed startup"
+      1: "Sandboxed, broad egress"
+      2: "User privileges or open egress"
+      3: "Admin, remote startup config, internal reach, unvalidated URLs"
+    maps_to: {iso27001_2022: ["8.20", "8.22", "8.9"]}
+  - id: data_exposure
+    name: Data Exposure
+    hard_gate: false
+    levels:
+      0: "Public or non-sensitive only"
+      1: "Internal data, isolated, nothing leaves"
+      2: "Confidential, shared context, third party without agreement"
+      3: "Regulated or secret data, no isolation, credentials in output"
+    maps_to: {owasp_llm: [LLM02], iso27001_2022: ["5.12", "5.34", "8.12"]}
+  - id: output_handling
+    name: Output Handling
+    hard_gate: false
+    levels:
+      0: "Schema validated, escaped, never executed"
+      1: "Mostly validated"
+      2: "Free text, partial validation"
+      3: "Executed, unescaped, or concatenated into queries"
+    maps_to: {owasp_llm: [LLM05], iso27001_2022: ["8.28", "8.26"]}
+  - id: auditability_logging
+    name: Auditability and Logging
+    hard_gate: false
+    levels:
+      0: "Full, attributed, tamper-evident, in SIEM"
+      1: "Attributed, minor gaps"
+      2: "Partial, no user attribution"
+      3: "No logs, or secrets in logs"
+    maps_to: {iso27001_2022: ["8.15", "8.16"]}
