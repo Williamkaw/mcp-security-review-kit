@@ -79,10 +79,14 @@ ISO/IEC 42001 controls are referenced in the rubric text. The numbering was chec
 - The scanner reads only the tool list. It matches English keywords and cannot see code, authentication, hosting or logging.
 - The thresholds (reject at 15, approve at 6 or less) are a first estimate. Three reviews did not argue for moving them, which is not proof they are right.
 - The GitHub review used the project's test snapshots for the tool list because a live build was not possible, and says so.
-- The rubric has one author and no second reviewer, so agreement between reviewers is untested.
+- The rubric has one author. It was reviewed by two peers (listed below), but whether independent reviewers give the same scores has not been measured.
 - The hardened scores for the GitHub server are predictions from documentation and source. I did not test them with a live token.
 - The filesystem plus fetch conclusion is a judgement against the rubric. No attack was built or run.
 - Reviews are a point in time. Servers change, so each record lists re-review triggers.
+
+## Reviewed by
+
+Suleiman T. and Andrew B. reviewed this work and gave feedback. Their review is not a certification, and any errors that remain are the author's.
 
 ## How this was built
 
