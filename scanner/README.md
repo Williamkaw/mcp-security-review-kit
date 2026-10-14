@@ -61,4 +61,6 @@ The first version scored the payments sample as "at least 2" for Permissions and
 
 Review 1 (filesystem server) exposed a false positive: "file system" in a description matched the execution word list. The pattern no longer matches `system` on its own.
 
+Review 3 (GitHub server, 128 tools) found two more false positives. A free-text `query` parameter was scored like SQL (floor 3), and `get_commit` was read as a write tool because of the word "commit". SQL strings still score 3, plain queries now score 1, and a read verb at the start of a tool name wins.
+
 Rules were added for each (`PS-FINANCIAL-ACTION`, `PS-IRREVERSIBLE`, `PS-OUTBOUND-PARAM`, `TI-READONLY-BUT-SENDS`, `PS-IDENTITY-CHANGE`). Multiple hidden-instruction signals on one description are now reported as a single finding, so one root cause is counted once.

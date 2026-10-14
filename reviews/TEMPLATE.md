@@ -7,6 +7,7 @@
 | Source and date reviewed | |
 | Reviewer | |
 | Intended use case | |
+| Configuration profile scored (default flags, or hardened) | |
 | Verdict | **Approve / Approve with conditions / Reject** |
 
 ## 1. Scope and evidence

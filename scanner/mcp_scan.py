@@ -102,6 +102,8 @@ def classify_tool(tool: dict) -> str:
         return "exec"
     if re.search(DELETE_WORDS, name.replace("_", " ")) or re.search(DELETE_WORDS, desc[:120]):
         return "delete"
+    if re.match(r"(get|list|search|read|find|describe)_", name):
+        return "read"  # a read verb at the start of the name wins over words like "commit"
     if re.search(WRITE_WORDS, name.replace("_", " ")):
         return "write"
     return "read"
@@ -203,9 +205,12 @@ def check_capability(tool, name, findings):
         if pl in URL_PARAMS and not constrained:
             findings.append(Finding("permissions_scope", 2, name, "PS-OPEN-URL",
                                     f"Parameter '{pname}' accepts an unconstrained URL or host. Risk of SSRF or data egress."))
-        if re.search(SQL_WORDS, pl) and pdef.get("type") == "string":
+        if re.search(r"\bsql\b", pl) and pdef.get("type") == "string":
             findings.append(Finding("output_handling", 3, name, "OH-RAW-QUERY",
-                                    f"Parameter '{pname}' looks like a raw query string passed to a backend. Check for injection."))
+                                    f"Parameter '{pname}' looks like a raw SQL string passed to a backend. Check for injection."))
+        elif pl == "query" and pdef.get("type") == "string":
+            findings.append(Finding("output_handling", 1, name, "OH-SEARCH-QUERY",
+                                    f"Parameter '{pname}' is a free-text query. Confirm it is a search expression, not SQL or a shell string."))
         if pdef.get("type") == "string" and not constrained and pl not in PATH_PARAMS | URL_PARAMS:
             findings.append(Finding("output_handling", 1, name, "OH-UNBOUNDED-STRING",
                                     f"Parameter '{pname}' is an unbounded string. Add maxLength, pattern, or enum."))
