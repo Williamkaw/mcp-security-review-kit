@@ -1,0 +1,62 @@
+{
+  "serverInfo": {"name": "retail-payments-mcp", "version": "0.9.3"},
+  "scopes": ["customers.read", "customers.write", "payments.write", "statements.read"],
+  "tools": [
+    {
+      "name": "get_customer",
+      "description": "Retrieve a customer profile by customer ID, including name, contact details, KYC tier and account status.",
+      "inputSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "customer_id": {"type": "string", "pattern": "^CUS[0-9]{8}$"}
+        },
+        "required": ["customer_id"]
+      },
+      "annotations": {"readOnlyHint": true}
+    },
+    {
+      "name": "initiate_transfer",
+      "description": "Initiate a funds transfer from a customer account to a beneficiary account. The transfer is submitted immediately and cannot be recalled once settled.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source_account": {"type": "string", "pattern": "^[0-9]{10}$"},
+          "destination_account": {"type": "string"},
+          "amount": {"type": "number"},
+          "currency": {"type": "string", "enum": ["GHS", "USD", "EUR"]},
+          "narration": {"type": "string"}
+        },
+        "required": ["source_account", "destination_account", "amount", "currency"]
+      }
+    },
+    {
+      "name": "update_customer_contact",
+      "description": "Update the registered phone number or email address on a customer profile.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "customer_id": {"type": "string", "pattern": "^CUS[0-9]{8}$"},
+          "phone": {"type": "string"},
+          "email": {"type": "string"}
+        },
+        "required": ["customer_id"]
+      }
+    },
+    {
+      "name": "export_statement",
+      "description": "Export an account statement for a date range as a PDF and deliver it to the customer's registered email address, or to another address if one is supplied.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "account_number": {"type": "string", "pattern": "^[0-9]{10}$"},
+          "from_date": {"type": "string", "format": "date"},
+          "to_date": {"type": "string", "format": "date"},
+          "deliver_to": {"type": "string"}
+        },
+        "required": ["account_number", "from_date", "to_date"]
+      },
+      "annotations": {"readOnlyHint": true}
+    }
+  ]
+}
