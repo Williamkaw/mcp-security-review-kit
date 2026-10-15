@@ -72,7 +72,7 @@ On Windows without `python` on the path, use `py` instead. Exit code `0` means n
 | 7 Output Handling | LLM05 | not mapped | not mapped | 8.28, 8.26 |
 | 8 Auditability and Logging | not mapped | Session and token attribution | MEASURE, MANAGE | 8.15, 8.16 |
 
-ISO/IEC 42001 controls are referenced in the rubric text. The numbering was checked against a published summary of the 2023 edition, so confirm it against your licensed copy before citing it in an audit.
+ISO/IEC 42001 controls are referenced in the rubric text. The numbering was checked against the author's licensed copy of ISO/IEC 42001:2023.
 
 ## Limitations
 
